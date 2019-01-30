@@ -1,0 +1,14 @@
+CC	= g++
+CFLAGS	= -Wall -g
+LIBRARIES = -lglut -lGLU -lGL
+
+all:    SnowManViewing
+
+SnowManViewing:    SnowManViewing.o
+	$(CC) $(CFLAGS) SnowManViewing.o -o SnowManViewing $(LIBRARIES)
+
+SnowManViewing.o:	SnowManViewing.c
+		$(CC) $(CFLAGS) -c SnowManViewing.c
+
+clean:
+		$(RM) *.o *~ SnowManViewing
