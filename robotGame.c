@@ -671,6 +671,46 @@ void drawBuildings(GLenum mode){
     glTranslatef(-(MaxDistance) - 5.0f, 0.0f, -95.0f);
 }
 
+void drawDottedLineVertical(){
+    glBegin(GL_QUADS);
+        glNormal3f(0.0f,1.0f,0.0f);
+        glColor4f(1.0f, 1.0f, 0.5f, 1.0f);
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0f, 0.3f, 0.0f);     // Bottom Left corner
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0f, 0.3f, 0.5f);     // Bottom Right corner
+        glTexCoord2f(1.0, 1.0); glVertex3f(1.0f, 0.3f, 0.5f);       // Top Right corner
+        glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0f, 0.3f, 0.0f);     // Top Left corner
+    glEnd();
+}
+void drawDottedLineHorizontal(){
+    glBegin(GL_QUADS);
+        glNormal3f(0.0f,1.0f,0.0f);
+        glColor4f(1.0f, 1.0f, 0.5f, 1.0f);
+        glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0f, 0.3f, 0.0f);     // Bottom Left corner
+        glTexCoord2f(1.0f, 0.0f); glVertex3f(0.0f, 0.3f, 1.0f);     // Bottom Right corner
+        glTexCoord2f(1.0, 1.0); glVertex3f(0.5f, 0.3f, 1.0f);       // Top Right corner
+        glTexCoord2f(0.0f, 1.0f); glVertex3f(0.5f, 0.3f, 0.0f);     // Top Left corner
+    glEnd();
+}
+void drawDottedLines(){
+    int numberOfDots = 67;
+    for(int j = 0; j < 21; j++){
+        for(int i = 0; i < numberOfDots; i++){
+            drawDottedLineVertical();
+            glTranslatef(3.0f, 0.0f, 0.0f);
+        }
+        glTranslatef(-201.0f, 0.0f, 10.0f);
+    }
+    glTranslatef(0.0f, 0.0f, -210.0f);
+    for(int j = 0; j < 21; j++){
+        for(int i = 0; i < numberOfDots; i++){
+            drawDottedLineHorizontal();
+            glTranslatef(0.0f, 0.0f, 3.0f);
+        }
+        glTranslatef(10.0f, 0.0f, -201.0f);
+    }
+    glTranslatef(-210.0f, 0.0f, 0.0f);
+}
+
 void drawRoadOne(){
     glBegin(GL_QUADS);
         glNormal3f(0.0f,1.0f,0.0f);
@@ -706,7 +746,6 @@ void drawRoads(){
         glTranslatef(10.0f, 0.0f, 0.0f);
     }
     glTranslatef(-207.5f, 0.0f, 2.5f);
-    
 }
 
 void display(void){
@@ -728,6 +767,10 @@ void display(void){
 
         //Draw Roads
         drawRoads();
+
+        //dotted line?
+        drawDottedLines();
+
         //Draw Robot
         drawRobot();
         //Draw Buildings
