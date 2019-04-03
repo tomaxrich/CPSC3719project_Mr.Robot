@@ -1,4 +1,4 @@
-#define PROGRAM_TITLE "CPSC 3719 TERM"
+#define PROGRAM_TITLE "CPSC 3710 TERM"
 #define DISPLAY_INFO "Robot Game"
 
 #include <stdlib.h>
@@ -15,6 +15,7 @@ int Window_Width = 600;
 int Window_Height = 400;
 
 int pause = 0;
+GLboolean f2down, f3down, zdown = false;
 
 //camera controls relative to the origin (world)
 int deltaX = 0;
@@ -28,8 +29,8 @@ int camStorY = 8;
 int camStorZ = 0;
 
 //view port camera controls
-int camX = -5;
-int camY = 5;
+int camX = -8;
+int camY = 8;
 int camZ = 0;
 
 int view = 0;
@@ -202,33 +203,43 @@ void drawRobot()
 }
 
 //House one
-void drawHouse() {
+void drawHouse(int i) {
+    int temp = i;
+    float colorRed, colorGreen;
+    if(temp == 1){
+        colorRed = 1.0;
+        colorGreen = 0.0;
+    }
+    else{
+        colorRed = 0.0;
+        colorGreen = 1.0;
+    }
     //Draw main square of house
     glBegin(GL_QUADS);
         //back face
         glNormal3f(0.0f,0.0f,0.0f);
-        glColor4f(1.0f,0.0f,0.0f,1.0f);
+        glColor4f(colorRed,colorGreen,0.0f,1.0f);
         glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.5f, 0.0f, 2.0);     // Bottom Left corner
         glTexCoord2f(1.0f, 0.0f); glVertex3f(2.5f, 0.0f, 2.0f);     // Bottom Right corner
         glTexCoord2f(1.0, 1.0); glVertex3f(2.5f, 4.0f, 2.0);       // Top Right corner
         glTexCoord2f(0.0f, 1.0f); glVertex3f(-2.5f, 4.0f, 2.0f);     // Top Left corner
         //front face
         glNormal3f(0.0f,0.0f,0.0f);
-        glColor4f(1.0f,0.0f,0.0f,1.0f);
+        glColor4f(colorRed,colorGreen,0.0f,1.0f);
         glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.5f, 0.0f, -1.0f);     // Bottom Left corner
         glTexCoord2f(1.0f, 0.0f); glVertex3f(2.5f, 0.0f, -1.0f);     // Bottom Right corner
         glTexCoord2f(1.0, 1.0); glVertex3f(2.5f, 4.0f, -1.0f);       // Top Right corner
         glTexCoord2f(0.0f, 1.0f); glVertex3f(-2.5f, 4.0f, -1.0f);     // Top Left corner
         //right face
         glNormal3f(0.0f,0.0f,0.0f);
-        glColor4f(1.0f,0.0f,0.0f,1.0f);
+        glColor4f(colorRed,colorGreen,0.0f,1.0f);
         glTexCoord2f(0.0f, 0.0f); glVertex3f(2.5f, 0.0f, -1.0f);     // Bottom Left corner
         glTexCoord2f(1.0f, 0.0f); glVertex3f(2.5f, 0.0f, 2.0f);     // Bottom Right corner
         glTexCoord2f(1.0, 1.0); glVertex3f(2.5f, 4.0f, 2.0f);      // Top Right corner
         glTexCoord2f(0.0f, 1.0f); glVertex3f(2.5f, 4.0f, -1.0f);     // Top Left corner
         //left face
         glNormal3f(0.0f,0.0f,0.0f);
-        glColor4f(1.0f,0.0f,0.0f,1.0f);
+        glColor4f(colorRed,colorGreen,0.0f,1.0f);
         glTexCoord2f(0.0f, 0.0f); glVertex3f(-2.5f, 0.0f, 2.0f);     // Bottom Left corner
         glTexCoord2f(1.0f, 0.0f); glVertex3f(-2.5f, 0.0f, -1.0f);     // Bottom Right corner
         glTexCoord2f(1.0, 1.0); glVertex3f(-2.5f, 4.0f, -1.0f);      // Top Right corner
@@ -291,8 +302,8 @@ void drawWindow2(){
     glEnd();
 }
 
-void drawHouseOne(){
-    drawHouse();
+void drawHouseOne(int i){
+    drawHouse(i);
     drawRoof();
     drawDoor();
     drawWindow1();
@@ -514,6 +525,7 @@ void drawHouse3Three(){
     drawWindow2Three();
     glTranslatef(0.0f, -8.0f, 0.0f);
 }
+
 void initMap(){
     int count;
     count = BUILDINGS * BUILDINGS;
@@ -527,18 +539,23 @@ void initMap(){
         }
         int output = out % 10;
         check = output;
-        if(check < 4){
+        if(check < 3){
             //build house 1
             Building_Map[i] = 1;
         }
         else{
-            if(check < 7){
+            if(check < 5){
                 //build house 2
                 Building_Map[i] = 2;
             }
             else{
-                //build house 3
-                Building_Map[i] = 3;
+                if(check < 8){
+                    //build house 3
+                    Building_Map[i] = 3;
+                }
+                else{
+                    Building_Map[i] = 4;
+                }
             }
         }
     }
@@ -591,9 +608,9 @@ void robotOrientation(){
                 camZ = camStorZ;
                 break;
             case 90:
-                camX = camStorX;
+                camX = camStorZ;
                 camY = camStorY;
-                camZ = -camStorZ;
+                camZ = camStorX;
                 break;
             case 180:
                 camX = -camStorX;
@@ -601,9 +618,9 @@ void robotOrientation(){
                 camZ = -camStorZ;
                 break;
             case 270:
-                camX = -camStorX;
+                camX = -camStorZ;
                 camY = camStorY;
-                camZ = -camStorZ;
+                camZ = -camStorX;
                 break;
         }
     }
@@ -634,13 +651,16 @@ void drawBuildings(GLenum mode){
             //if previously shot don't draw
 
             if(Building_Map[index] == 1){
-                drawHouseOne();
+                drawHouseOne(1);
             }
             else if(Building_Map[index] == 2){
                 drawHouse2Two();
             }
             else if(Building_Map[index] == 3){
                 drawHouse3Three();
+            }
+            else if(Building_Map[index] == 4){
+                drawHouseOne(2);
             }
             glTranslatef(10.0f, 0.0f, 0.0f);
             count++;
@@ -739,7 +759,20 @@ void init(int width, int height){
 	
 	glEnable(GL_DEPTH_TEST);
 }
-
+void releaseKey(int key, int x, int y)
+{
+   switch(key)
+   {
+      case GLUT_KEY_F2:
+	 f2down = false;
+	 headDeg=0.0;
+	 break;
+      case GLUT_KEY_F3:
+	 f3down = false;
+	 headDeg=0.0;
+	 break;
+   }
+}
 void keyPressControl(int key, int x, int y){
     if(pause == 0){
         switch(key){
@@ -751,23 +784,19 @@ void keyPressControl(int key, int x, int y){
             case GLUT_KEY_F2:
                 //Turn head to the right if released back to centre
                 printf("KEY: F2\n");
-                if(headDeg >= -179.0){
-                    headDeg -= 30.0;
-                }
+                f2down = true;
                 break;
             case GLUT_KEY_F3:
                 //Turn head to the left if released back to centre
                 printf("KEY: F3\n");
-                if(headDeg <= 179.0){
-                    headDeg += 30.0;
-                }
+                f3down = true;
                 break;
             case GLUT_KEY_F4:
                 //returns to default view
                 printf("KEY: F4\n");
-                camStorX = -10;
-                camStorY = 10;
-                camStorZ = 0;
+                camStorX = -8;//camX;
+                camStorY = 8;//camY;
+                camStorZ = 0;//camZ;
                 view = 0;
                 break;
             case GLUT_KEY_F5:
@@ -837,7 +866,15 @@ void keyPressControl(int key, int x, int y){
         }
     }
 }
-
+void upKey(unsigned char key, int x, int y)
+{
+   switch(key)
+   {
+      case 'z':
+	 zdown = false;
+	 break;
+   }
+}
 void pressKey(unsigned char key, int x, int y){
     if(pause == 0){
         switch(key){
@@ -846,69 +883,8 @@ void pressKey(unsigned char key, int x, int y){
                 pause = 1;
                 break;
             case 'z':
-				if(RobotOrient == 0.0){
-					printf ("KEY: Z press detected [FORWARD]\n");
-					if(deltaX >= 0 && deltaX <= (MaxDistance)){
-						printf ("RESULT: VALID\n");
-						deltaX++;
-						RobotX += 1.0;
-					}
-					else{
-						printf ("RESULT:BOUND X(%i) Z(%i)\n", deltaX, deltaZ);
-					// following code is to correct for error
-					// redundant due to error catch in display
-						deltaX--;
-						RobotX -= 1.0;
-					}
-				}
-				else if(RobotOrient == 90.0){
-					printf ("KEY: Z [LEFT]\n");
-					if(deltaZ >= 0 && deltaZ <= (MaxDistance)){
-						printf ("RESULT: VALID\n");
-						deltaZ++;
-						RobotZ += 1.0;
-					}
-					else{
-						printf ("RESULT:BOUND X(%i) Z(%i)\n", deltaX, deltaZ);
-					// following code is to correct for error
-					// redundant due to error catch in display
-						deltaZ--;
-						RobotZ -= 1.0;
-					}
-				}
-				else if(RobotOrient == 180.0){
-					printf ("KEY: Z [BACK]\n");
-					if(deltaX >= 0 && deltaX <= (MaxDistance)){
-						printf ("RESULT: VALID\n");
-						deltaX--;
-						RobotX -= 1.0;
-					}
-					else{
-						printf ("RESULT:BOUND X(%i) Z(%i)\n", deltaX, deltaZ);
-					// following code is to correct for error
-					// redundant due to error catch in display
-						deltaX++;
-						RobotX += 1.0;
-					}
-				}
-				else if(RobotOrient == 270.0){
-					printf ("KEY: Z [RIGHT]\n");
-					if(deltaZ >= 0 && deltaZ <= (float)(MaxDistance)){
-						printf ("RESULT: VALID\n");
-						deltaZ--;
-						RobotZ -= 1.0;
-					}
-					else{
-						printf ("RESULT:BOUND X(%i) Z(%i)\n", deltaX, deltaZ);
-					// following code is to correct for error
-					// redundant due to error catch in display
-						deltaZ++;
-						RobotZ += 1.0;
-					}
-				}
-				else{printf("ERROR UNDEFINED DIRECTION\n");
-                }
-			    break;
+				zdown = true;
+                break;
             case 'r':
                 printf ("KEY: r [RESET ROBOT]");
                 deltaX = 0;
@@ -976,50 +952,107 @@ void pressKey(unsigned char key, int x, int y){
 		 }
 	}
 }
-
+void update()
+{
+   if (f2down)
+      headDeg += 2.0;
+   if (f3down)
+      headDeg -= 2.0;
+   if (zdown){
+      if(RobotOrient==0.0){
+	 if(deltaX>=0 && deltaX<=(MaxDistance)){
+	    deltaX++;
+	    RobotX+=1.0;
+	 }
+	 else{
+	    deltaX--;
+	    RobotX-=1.0;
+	 }
+      }
+      else if(RobotOrient==90.0){
+	 if(deltaZ>=0 && deltaZ<=(MaxDistance)){
+	    deltaZ++;
+	    RobotZ+=1.0;
+	 }
+	 else{
+	    deltaZ--;
+	    RobotZ-=1.0;
+	 }
+      }
+      else if(RobotOrient==180.0){
+	 if(deltaX>=0&&deltaX<=(MaxDistance)){
+	    deltaX--;
+	    RobotX-=1.0;
+	 }
+	 else{
+	    deltaX++;
+	    RobotX+=1.0;
+	 }
+      }
+      else if(RobotOrient==270.0){
+	 if(deltaZ>=0&&deltaZ<=(float)(MaxDistance)){
+	    deltaZ--;
+	    RobotZ-=1.0;
+	 }
+	 else{
+	    deltaZ++;
+	    RobotZ+=1.0;
+	 }
+      }
+      else{
+	 printf("ERROR UNDEFINED DIRECTION\n");
+      }
+      antDeg+=antSpeed;
+   }
+   display();
+}
 void processHits(GLint hits, GLuint buffer[]){
     GLint *ptr;
 
     ptr = (GLint *) buffer;
     ptr += 3;
     
+    if(view == 0){
+        int check = Building_Map[*ptr-1];
+        //Remove Building
+        if(check < 4){
+            if(hits == 1){
+                if(check == 1){
+                    Building_Map[*ptr-1] = 0;
+                }
+                else if(check == 2){
+                    Building_Map[*ptr-1] = 1;
+                }
+                else if(check == 3){
+                    Building_Map[*ptr-1] = 2;
+                }
+            }
+            else if(hits == 2){
+                if(check == 1){
+                    Building_Map[*ptr-1] = 0;
+                }
+                else if(check == 2){
+                    Building_Map[*ptr-1] = 0;
+                }
+                else if(check == 3){
+                    Building_Map[*ptr-1] = 1;
+                }
+            }
+            else if (hits >= 3){
+                if(check == 1){
+                    Building_Map[*ptr-1] = 0;
+                }
+                else if(check == 2){
+                    Building_Map[*ptr-1] = 0;
+                }
+                else if(check == 3){
+                    Building_Map[*ptr-1] = 0;
+                }
+            }
+        }
+    }
+    else{
 
-    int check = Building_Map[*ptr-1];
-    //Remove Building
-    if(check < 4){
-        if(hits == 1){
-            if(check == 1){
-                Building_Map[*ptr-1] = 0;
-            }
-            else if(check == 2){
-                Building_Map[*ptr-1] = 1;
-            }
-            else if(check == 3){
-                Building_Map[*ptr-1] = 2;
-            }
-        }
-        else if(hits == 2){
-            if(check == 1){
-                Building_Map[*ptr-1] = 0;
-            }
-            else if(check == 2){
-                Building_Map[*ptr-1] = 0;
-            }
-            else if(check == 3){
-                Building_Map[*ptr-1] = 1;
-            }
-        }
-        else if (hits >= 3){
-            if(check == 1){
-                Building_Map[*ptr-1] = 0;
-            }
-            else if(check == 2){
-                Building_Map[*ptr-1] = 0;
-            }
-            else if(check == 3){
-                Building_Map[*ptr-1] = 0;
-            }
-        }
     }
 }
 
@@ -1095,9 +1128,13 @@ int main(int argc, char **argv){
     glutInitWindowPosition(0,0);
 
     glutDisplayFunc(&display);
-    glutIdleFunc(&display);
+    //changed from &display
+    glutIdleFunc(&update);
+    glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
     glutSpecialFunc(&keyPressControl);
+    glutSpecialUpFunc(&releaseKey);
     glutKeyboardFunc(&pressKey);
+    glutKeyboardUpFunc(&upKey);
     glutReshapeFunc(&resize);
     glutMouseFunc(&mouse);
 
